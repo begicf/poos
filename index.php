@@ -62,9 +62,7 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary float-right">Pokreni</button>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary float-right">Pokreni</button>
-                    </div>
+
                     <div class="form-group">
                         <p class="font-italic">* Odaberite parametre i pokrenite algoritam</p>
                     </div>
