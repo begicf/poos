@@ -25,7 +25,7 @@ $faceRecognizer = LBPHFaceRecognizer::create();
 
 $gray = cvtColor($src, COLOR_BGR2GRAY);
 $faceClassifier->detectMultiScale($gray, $faces);
-//var_export($faces);
+
 
 $faceImages = $faceLabels = [];
 if ($faces) {
@@ -35,7 +35,7 @@ if ($faces) {
         $faceImages[] = $gray->getImageROI($face); // face coordinates to image
         $faceLabels[] = 8; // me
 
-        //cv\imwrite("results/recognize_face_by_lbph_me$k.jpg", $gray->getImageROI($face));
+
     }
     $faceRecognizer->read("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
     $faceRecognizer->update($faceImages, $faceLabels);
@@ -49,24 +49,7 @@ if ($faces) {
         rectangleByRect($src, $face, $scalar, 3);
     }
 }
-/*
-    // eyes by haarcascade_eye
-    $eyeClassifier = new CascadeClassifier();
 
-    $eyeClassifier->load('models/haarcascades/haarcascade_eye.xml');
-    $eyes = null;
-    $eyeClassifier->detectMultiScale($gray, $eyes);
-
-
-    /*
-    if ($eyes) {
-        $scalar = new Scalar(0, 0, 255); //red
-
-        foreach ($eyes as $eye) {
-            rectangle($src, $eye->x, $eye->y, $eye->x + $eye->width, $eye->y + $eye->height, $scalar, 2);
-        }
-    }
-    */
 
 imwrite($izlaz . $input, $src);
 
