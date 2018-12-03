@@ -13,6 +13,7 @@ $izlaz = 'rezultati/';
 
 $input = filter_input(INPUT_POST, 'slika');
 
+
 $src = imread($ulaz . $input);
 
 // modeli lbpcascade_frontalface
@@ -26,7 +27,7 @@ $faceRecognizer = LBPHFaceRecognizer::create();
 
 $faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
 
-$labels = [8 => 'Fuad Begic'];
+$labels = [0=>'Nepoznato',8 => 'Fuad Begic','9'=> 'Mel Gibosn'];
 
 //equalizeHist($gray, $gray);
 foreach ($faces as $face) {
@@ -34,7 +35,9 @@ foreach ($faces as $face) {
 
     $faceLabel = $faceRecognizer->predict($faceImage, $faceConfidence);
 
-    //echo "{$faceLabel}, {$faceConfidence}\n";
+
+
+
     $scalar = new \CV\Scalar(0, 0, 255);
     rectangleByRect($src, $face, $scalar, 2);
     $text = $labels[$faceLabel];
@@ -87,6 +90,7 @@ imwrite($izlaz . $input . '_det', $src);
     <div class="row">
         <div class="col">
             <h4>Ulaz</h4>
+            <h5><?= "Predict: {$faceLabel}, Conf:{$faceConfidence}\n";?></h5>
             <img src="<?= $izlaz . $input.'_det' ?>" class="img-fluid img-thumbnail" alt="Ulaz">
         </div>
     </div>

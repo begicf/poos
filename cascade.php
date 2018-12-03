@@ -34,14 +34,14 @@ if ($faces) {
 
     foreach ($faces as $k => $face) {
         $faceImages[] = $gray->getImageROI($face); // face coordinates to image
-        $faceLabels[] = 8; // me
+        $faceLabels[] = 9;
 
 
     }
     $faceRecognizer->read("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
     $faceRecognizer->update($faceImages, $faceLabels);
 
-    $faceRecognizer->write("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
+   // $faceRecognizer->write("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
 
 
     $scalar = new Scalar(0, 0, 255); //blue

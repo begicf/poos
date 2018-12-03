@@ -28,9 +28,9 @@
     <p class="lead">PHP 7.2, OpenCV 3.5</p>
 
     <div class="card">
-        <h5 class="card-header">Algortiam Face detection&recognition</h5>
+        <h5 class="card-header">Algortiam Face detection i treniranje</h5>
         <div class="card-body">
-            <h5 class="card-title">Kaskadni filter za detekciju</h5>
+            <h5 class="card-title">Kaskadni filter za detekciju i treniranje</h5>
         </div>
         <div class="row justify-content-md-center">
             <div class="col col-md-10">
@@ -78,7 +78,7 @@
         </div>
         <div class="row justify-content-md-center">
             <div class="col col-md-10">
-                <form method="post" action="detected.php">
+                <form method="post" action="recognizer.php">
                     <div class="form-group">
                         <label for="slika">Izaberite sliku</label>
 
@@ -95,7 +95,7 @@
                         <label for="slika">Izaberite model</label>
 
                         <?php $models = array_diff(scandir('modeli/lbpcascades'), array('..', '.')); ?>
-                        
+
                     </div>
 
                     <div class="form-group">
