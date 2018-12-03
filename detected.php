@@ -3,59 +3,48 @@
 use CV\CascadeClassifier;
 use CV\Face\LBPHFaceRecognizer;
 use CV\Scalar;
-use function CV\{cvtColor, equalizeHist, imread, imwrite, rectangleByRect};
+use CV\Point;
+use function CV\{cvtColor, equalizeHist, imread, imwrite, putText, rectangle, rectangleByRect};
 use const CV\{COLOR_BGR2GRAY};
 
+//use Point;
 $ulaz = 'slike/';
 $izlaz = 'rezultati/';
 
-
 $input = filter_input(INPUT_POST, 'slika');
-$mod = filter_input(INPUT_POST, 'model');
-$src = imread($ulaz . $input);
 
+$src = imread($ulaz . $input);
 
 // modeli lbpcascade_frontalface
 $faceClassifier = new CascadeClassifier();
-$faceClassifier->load('modeli/lbpcascades/' . $mod);
-
-// LBPHFaceRecognizer
-$faceRecognizer = LBPHFaceRecognizer::create();
-//equalizeHist($gray, $gray);
+$faceClassifier->load('modeli/lbpcascades/lbpcascade_frontalface_improved.xml');
 
 $gray = cvtColor($src, COLOR_BGR2GRAY);
-
 $faceClassifier->detectMultiScale($gray, $faces);
 
+$faceRecognizer = LBPHFaceRecognizer::create();
 
-$faceImages = $faceLabels = [];
-if ($faces) {
+$faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
 
+$labels = [8 => 'Fuad Begic'];
 
-    foreach ($faces as $k => $face) {
-        $faceImages[] = $gray->getImageROI($face); // face coordinates to image
-        $faceLabels[] = 8; // me
+//equalizeHist($gray, $gray);
+foreach ($faces as $face) {
+    $faceImage = $gray->getImageROI($face);
 
+    $faceLabel = $faceRecognizer->predict($faceImage, $faceConfidence);
 
-    }
-    $faceRecognizer->read("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
-    $faceRecognizer->update($faceImages, $faceLabels);
-
-    $faceRecognizer->write("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
-
-
-    $scalar = new Scalar(0, 0, 255); //blue
-
-    foreach ($faces as $face) {
-        rectangleByRect($src, $face, $scalar, 3);
-    }
+    //echo "{$faceLabel}, {$faceConfidence}\n";
+    $scalar = new \CV\Scalar(0, 0, 255);
+    rectangleByRect($src, $face, $scalar, 2);
+    $text = $labels[$faceLabel];
+    rectangle($src, $face->x, $face->y, $face->x + ($faceLabel == 1 ? 50 : 130), $face->y - 30, new Scalar(255, 255, 255), -2);
+    putText($src, "$text", new Point($face->x, $face->y - 2), 0, 1.5, new Scalar(), 2);
 }
-
-
-imwrite($izlaz . $input, $src);
-
+imwrite($izlaz . $input . '_det', $src);
 
 ?>
+
 <!doctype html>
 <html lang="bs-BA">
 <head>
@@ -94,19 +83,11 @@ imwrite($izlaz . $input, $src);
 
 </main>
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h5>Model: <?= $mod ?></h5>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col">
             <h4>Ulaz</h4>
-            <img src="<?= $ulaz . $input ?>" class="img-fluid img-thumbnail" alt="Ulaz">
-        </div>
-        <div class="col">
-            <h4>Izlaz</h4>
-            <img src="<?= $izlaz . $input ?>" class="img-fluid img-thumbnail" alt="Izlaz">
+            <img src="<?= $izlaz . $input.'_det' ?>" class="img-fluid img-thumbnail" alt="Ulaz">
         </div>
     </div>
 </div>

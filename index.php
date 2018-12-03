@@ -70,6 +70,45 @@
             </div>
         </div>
     </div>
+    <br/>
+    <div class="card">
+        <h5 class="card-header">Face recognition</h5>
+        <div class="card-body">
+            <h5 class="card-title">Prepoznavanje lica</h5>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col col-md-10">
+                <form method="post" action="detected.php">
+                    <div class="form-group">
+                        <label for="slika">Izaberite sliku</label>
+
+                        <?php $file = array_diff(scandir('slike'), array('..', '.')); ?>
+
+                        <select name="slika" id="slika" class="form-control">
+                            <?php foreach ($file as $row): ?>
+                                <option value="<?= $row ?>"><?= $row ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slika">Izaberite model</label>
+
+                        <?php $models = array_diff(scandir('modeli/lbpcascades'), array('..', '.')); ?>
+                        
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-info float-right">Detektuj</button>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="font-italic">* Izaberite sliku</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <br/>
 
