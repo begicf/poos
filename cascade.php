@@ -112,7 +112,7 @@ imwrite($izlaz . $input, $src);
 </div>
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">&copy; 2018 Begić Fuad, Ahetmović Selma</span>
+        <span class="text-muted">&copy; 2018 Begić Fuad, Ahmetović Selma</span>
     </div>
 </footer>
 
