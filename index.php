@@ -59,31 +59,6 @@
                         </select>
                     </div>
 
-                    <div class="form-check">
-                        <input name="noise" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Uključi filter za uklanjanje šuma
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-                        <input name="hist" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Ujednačavanje histograma
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-                        <input name="dilate" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Dilate
-                        </label>
-
-                    </div>
-
-
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary float-right">Pokreni</button>
                     </div>
@@ -145,7 +120,6 @@
                 <li class="list-group-item"><a href="rezultati">Rezultati</a></li>
                 <li class="list-group-item"><a href="modeli/lbpcascades/">Modeli</a></li>
                 <li class="list-group-item"><a href="trenirani_model/">Trenirani modeli za prepoznavanje</a></li>
-                <li class="list-group-item"><a href="anotacija">Anotacije</a></li>
             </ul>
 
 
@@ -156,7 +130,7 @@
 </main>
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">&copy; 2018 Begić Fuad, Ahetmović Selma</span>
+        <span class="text-muted">&copy; 2018 Begić Fuad, Ahmetović Selma</span>
     </div>
 </footer>
 
