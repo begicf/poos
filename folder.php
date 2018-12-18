@@ -1,11 +1,12 @@
 <?php
 
 ini_set('max_execution_time', 300);
+
 use CV\CascadeClassifier;
 use CV\Face\LBPHFaceRecognizer;
 use CV\Point;
-use CV\Size;
 use CV\Scalar;
+use CV\Size;
 use function CV\{addWeighted,
     bilateralFilter,
     blur,
@@ -219,6 +220,36 @@ function detection()
 
 }
 
+//Split slike
+function splitFolder()
+{
+
+    $ulaz = 'slike/';
+    $file = array_diff(scandir('slike'), array('..', '.'));
+
+    foreach ($file as $row):
+
+        $matches = filter_var($row, FILTER_SANITIZE_NUMBER_INT);
+
+        if ($matches < 11):
+            if (file_exists('train/'.$row)):
+                unlink('train/'.$row);
+            endif;
+
+            copy($ulaz.$row,'train/'.$row);
+
+        else:
+            if (file_exists('test/'.$row)):
+                unlink('test/'.$row);
+            endif;
+
+            copy($ulaz.$row,'test/'.$row);
+        endif;
+
+    endforeach;
+
+}
+
 if ($_POST['contrast'] == 1):;
     contrastImage();
 endif;
@@ -246,6 +277,10 @@ endif;
 
 if ($_POST['detekcija'] == 1):
     detection();
+endif;
+
+if ($_POST['split'] == 1):
+    splitFolder();
 endif;
 ?>
 
@@ -291,6 +326,8 @@ endif;
                 <li class="list-group-item"><a target="_blank" href="slike">Ulaz</a></li>
                 <li class="list-group-item"><a target="_blank" href="rezultati">Rezultati</a></li>
                 <li class="list-group-item"><a target="_blank" href="anotacija">Anotacije</a></li>
+                <li class="list-group-item"><a target="_blank" href="train">Train</a></li>
+                <li class="list-group-item"><a target="_blank" href="test">Test</a></li>
             </ul>
 
         </div>

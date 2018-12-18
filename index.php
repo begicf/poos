@@ -93,6 +93,14 @@
                         </label>
 
                     </div>
+
+                    <div class="form-check">
+                        <input name="split" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Split u train i test folder
+                        </label>
+
+                    </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary float-right">Konvertuj grupu slika</button>
                     </div>
