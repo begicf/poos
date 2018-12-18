@@ -2,8 +2,8 @@
 
 use CV\CascadeClassifier;
 use CV\Face\LBPHFaceRecognizer;
-use CV\Scalar;
 use CV\Point;
+use CV\Scalar;
 use function CV\{cvtColor, equalizeHist, imread, imwrite, putText, rectangle, rectangleByRect};
 use const CV\{COLOR_BGR2GRAY};
 
@@ -13,6 +13,11 @@ $izlaz = 'rezultati/';
 
 $input = filter_input(INPUT_POST, 'slika');
 
+
+// obrisi ako postoji izlazni file
+if (file_exists($izlaz . $input . '_det')):
+    unlink($izlaz . $input . '_det');
+endif;
 
 $src = imread($ulaz . $input);
 
@@ -27,21 +32,24 @@ $faceRecognizer = LBPHFaceRecognizer::create();
 
 $faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
 
-$labels = [0=>'Nepoznato',8 => 'Fuad Begic','9'=> 'Mel Gibosn'];
+$labels = [1 => 'Fuad Begic', 2 => 'Selma Ahmetovic', 3 => 'Nepoznato'];
 
-//equalizeHist($gray, $gray);
+equalizeHist($gray, $gray);
 foreach ($faces as $face) {
     $faceImage = $gray->getImageROI($face);
 
     $faceLabel = $faceRecognizer->predict($faceImage, $faceConfidence);
 
-
+    if ($faceConfidence > 70):
+       $faceLabel = 3;
+    endif;
 
 
     $scalar = new \CV\Scalar(0, 0, 255);
     rectangleByRect($src, $face, $scalar, 2);
     $text = $labels[$faceLabel];
-    rectangle($src, $face->x, $face->y, $face->x + ($faceLabel == 1 ? 50 : 130), $face->y - 30, new Scalar(255, 255, 255), -2);
+
+    rectangle($src, $face->x, $face->y, $face->x+80 + ($faceLabel == 1 ? 50 : 130), $face->y - 30, new Scalar(255, 255, 255), -2);
     putText($src, "$text", new Point($face->x, $face->y - 2), 0, 1.5, new Scalar(), 2);
 }
 imwrite($izlaz . $input . '_det', $src);
@@ -90,14 +98,14 @@ imwrite($izlaz . $input . '_det', $src);
     <div class="row">
         <div class="col">
             <h4>Ulaz</h4>
-            <h5><?= "Predict: {$faceLabel}, Conf:{$faceConfidence}\n";?></h5>
-            <img src="<?= $izlaz . $input.'_det' ?>" class="img-fluid img-thumbnail" alt="Ulaz">
+            <h5><?= "Predict: {$faceLabel}, Conf:{$faceConfidence}\n"; ?></h5>
+            <img src="<?= $izlaz . $input . '_det' ?>" class="img-fluid img-thumbnail" alt="Ulaz">
         </div>
     </div>
 </div>
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">&copy; 2018 Begić Fuad, Ahmetović Selma</span>
+        <span class="text-muted">&copy; 2018 Begić Fuad, Ahetmović Selma</span>
     </div>
 </footer>
 

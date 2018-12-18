@@ -1,12 +1,12 @@
 <?php
-ini_set('memory_limit', '1000');
 
 use CV\CascadeClassifier;
 use CV\Face\LBPHFaceRecognizer;
 use CV\Point;
 use CV\Scalar;
 use CV\Size;
-use function CV\{addWeighted,
+use function CV\{
+    addWeighted,
     bilateralFilter,
     blur,
     cvtColor,
@@ -21,115 +21,35 @@ use function CV\{addWeighted,
     rectangleByRect};
 use const CV\{COLOR_BGR2GRAY, MORPH_CROSS, MORPH_ELLIPSE, MORPH_RECT};
 
-//Flukcija za kontrast i osvijeteljenje
-function contrastImage($ulaz, $contrastType, $input, $tmp)
-{
-    $imagick = new \Imagick(realpath($ulaz . $input));
-    if ($contrastType != 2) {
-        $imagick->brightnessContrastImage(2, 3, 1);
-    }
-
-
-    $imagick->writeImage($tmp . $input);
-}
-
-//Maskiranje naostrina
-function maskSharp($src)
-{
-    $dst = null;
-    for ($i = 1; $i < 6; $i = $i + 2) {
-
-        GaussianBlur($src, $dst, new Size($i, $i), 0, 0);
-
-    }
-
-    return $dst;
-}
-
-//Ulkanjanje suma
-function nois($src)
-{
-    $dst = null;
-
-    for ($i = 1; $i < 6; $i = $i + 2) {
-        bilateralFilter($src, $dst, $i, $i * 2, $i / 2);
-    }
-    return $dst;
-}
-
-//Diletacija
-function dilateImage($src)
-{
-    $dilation_type = MORPH_CROSS;
-    $dilation_size = 4;
-    $dst = null;
-    $element = getStructuringElement($dilation_type,
-        new Size(2 * $dilation_size + 1, 2 * $dilation_size + 1),
-        new Point($dilation_size, $dilation_size));
-
-    dilate($src, $dst, $element);
-
-    return $dst;
-}
-
 
 //Folderi
 $ulaz = 'slike/';
-$izlaz = 'rezultati/';
+$izlaz = 'tmp/';
 $anotacija = 'anotacija/';
-$tmp = 'tmp/';
 
 
 $input = filter_input(INPUT_POST, 'slika');
 
 $mod = filter_input(INPUT_POST, 'model');
 
-$noise = filter_input(INPUT_POST, 'noise');
+$trainModel = filter_input(INPUT_POST, 'train_model');
 
-$hist = filter_input(INPUT_POST, 'hist');
-
-$dilate = filter_input(INPUT_POST, 'dilate');
-
-//kontrast i osvijetljenje
-contrastImage($ulaz, 0, $input, $tmp);
+$train = filter_input(INPUT_POST, 'train', FILTER_VALIDATE_INT);
 
 
-if (file_exists($tmp . $input)):
-
-    // obrisi ako postoji izlazni file
-    if (file_exists($izlaz . $input)):
-        unlink($izlaz . $input);
-    endif;
-
-    $src = imread($tmp . $input);
-    $dst = null;
-
-else:
-
-    die('Ulazni fajl se ne može procitat');
-
-endif;
-
+$src = imread($ulaz . $input);
 
 //detekcija lica pomocu kaskadnog klasifikatora
 $faceClassifier = new CascadeClassifier();
 $faceClassifier->load('modeli/lbpcascades/' . $mod);
 
-// LBPHFaceRecognizer
-//$faceRecognizer = LBPHFaceRecognizer::create();
 
+//LBPHFaceRecognizer
 
-//maskiranje neostrina i uklanjanje šuma
-if ($noise == 1):
-    $src = nois($src);
-    $src = maskSharp($src);
-
+if ($trainModel == true):
+    $faceRecognizer = LBPHFaceRecognizer::create();
 endif;
 
-//diletacija
-if ($dilate == 1):
-    $src = dilateImage($src);
-endif;
 
 //konvertovanje slike u sivu
 $gray = cvtColor($src, COLOR_BGR2GRAY);
@@ -147,26 +67,28 @@ $faceImages = $faceLabels = [];
 
 if ($faces) {
 
+    //Treniranje objekta
 
-    /* Treniranje objekta
-    foreach ($faces as $k => $face) {
-        $faceImages[] = $gray->getImageROI($face); // face coordinates to image
-        $faceLabels[] = 9;
-    }
+    if ($trainModel == true):
+        foreach ($faces as $k => $face) {
+            $faceImages[] = $gray->getImageROI($face); // face coordinates to image
+            $faceLabels[] = $train;
+        }
 
-    $faceRecognizer->read("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
-    $faceRecognizer->update($faceImages, $faceLabels);
-    $faceRecognizer->write("trenirani_model".DIRECTORY_SEPARATOR."train.yml");
-*/
-    
+        $faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
+        $faceRecognizer->update($faceImages, $faceLabels);
+        $faceRecognizer->write("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
+    endif;
+
     $scalar = new Scalar(0, 0, 255);
+
     //anotacije na detektovanom licu
     foreach ($faces as $face) {
 
-        $data['x'] = 'x:' . $face->x . ';';
-        $data['y'] = 'y:' . $face->y . ';';
-        $data['width'] = 'width:' . $face->width . ';';
-        $data['height'] = 'height:' . $face->height . ';' . PHP_EOL;
+        $data['x'] .= 'x:' . $face->x . ';';
+        $data['y'] .= 'y:' . $face->y . ';';
+        $data['width'] .= 'width:' . $face->width . ';';
+        $data['height'] .= 'height:' . $face->height . ';' . PHP_EOL;
 
         file_put_contents($anotacija . strtok($input, '.') . '.txt', $data);
 

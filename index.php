@@ -28,6 +28,84 @@
     <p class="lead">PHP 7.2, OpenCV 3.5</p>
 
     <div class="card">
+        <h5 class="card-header">Image conversion</h5>
+        <div class="card-body">
+            <h5 class="card-title">Image conversion</h5>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col col-md-10">
+                <form method="post" action="folder.php">
+
+
+                    <div class="form-check">
+                        <input name="detekcija" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Anotacija i detekcija (maskiranje)
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input name="noise" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Uklanjanje šuma
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input name="mask" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Maskiranje naostrina
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input name="contrast" class="form-check-input" value="1" type="checkbox">
+                        <label class="form-check-label">
+                            Filter za kontrast
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input name="bright" class="form-check-input" value="1" type="checkbox">
+                        <label class="form-check-label">
+                            Filter za osvijetljenje
+                        </label>
+                    </div>
+
+
+
+                    <div class="form-check">
+                        <input name="hist" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Ujednačavanje histograma
+                        </label>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input name="dilate" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Dilate
+                        </label>
+
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary float-right">Konvertuj grupu slika</button>
+                    </div>
+                    <div class="form-group">
+                        <p class="font-italic">* Rezultati grupne konverzije bit ce prikazani u folderu rezultati</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="card">
         <h5 class="card-header">Algortiam Face detection i treniranje</h5>
         <div class="card-body">
             <h5 class="card-title">Kaskadni filter za detekciju i treniranje</h5>
@@ -53,43 +131,40 @@
                         <?php $models = array_diff(scandir('modeli/lbpcascades'), array('..', '.')); ?>
 
                         <select name="model" id="slika" class="form-control">
-                            <?php foreach ($models as $row): ?>
-                                <option value="<?= $row ?>"><?= $row ?></option>
+                            <?php foreach ($models as $key => $row): ?>
+
+                                <?php if ($key < 4): ?>
+                                    <option value="<?= $row ?>" disabled><?= $row ?></option>
+                                <?php else: ?>
+                                    <option value="<?= $row ?>"><?= $row ?></option>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
 
+
+                    <br/>
+
+
                     <div class="form-check">
-                        <input  class="form-check-input"    type="checkbox" disabled checked>
-                        <label class="form-check-label" >
-                            Filter za kontrast i svijetlost
+                        <input class="form-check-input" type="checkbox" id="trainModel" name="train_model" value="1"
+                               id="trainModel">
+                        <label class="form-check-label" for="trainModel">
+                            Uključi modul za treniranje
                         </label>
 
                     </div>
 
-                    <div class="form-check">
-                        <input name="noise" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Uključi filter za maskiranje naostrina i uklanjanje šuma
-                        </label>
 
-                    </div>
+                    <div class="form-group">
 
-                    <div class="form-check">
-                        <input name="hist" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Ujednačavanje histograma
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-                        <input name="dilate" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            Dilate
-                        </label>
-
+                        <label for="train">Treniraj model</label>
+                        <select name="train" id="train" class="form-control" disabled>
+                            <option value="1">Fuad Begic</option>
+                            <option value="2">Selma Ahmetović</option>
+                            <option value="3">Nepoznato</option>
+                        </select>
                     </div>
 
 
@@ -155,6 +230,7 @@
                 <li class="list-group-item"><a href="modeli/lbpcascades/">Modeli</a></li>
                 <li class="list-group-item"><a href="trenirani_model/">Trenirani modeli za prepoznavanje</a></li>
                 <li class="list-group-item"><a href="anotacija">Anotacije</a></li>
+                <li class="list-group-item"><a href="10_posto">10%</a></li>
             </ul>
 
 
@@ -182,3 +258,13 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+
+<script type="application/javascript">
+    $("#trainModel").click(function () {
+        if ($("#trainModel").is(':checked'))
+            $("#train").prop('disabled', false);
+        else
+            $("#train").prop('disabled', true);
+    })
+
+</script>
