@@ -1,32 +1,29 @@
 <?php
+ini_set('max_execution_time', 300);
 
 use CV\CascadeClassifier;
+use CV\Face\FacemarkLBF;
 use CV\Face\LBPHFaceRecognizer;
-use CV\Point;
 use CV\Scalar;
 use CV\Size;
-use function CV\{
-    addWeighted,
-    bilateralFilter,
+use function CV\{bilateralFilter,
     blur,
+    circle,
     cvtColor,
-    dilate,
     equalizeHist,
-    erode,
-    GaussianBlur,
-    getStructuringElement,
     imread,
     imwrite,
     medianBlur,
-    rectangleByRect};
-use const CV\{COLOR_BGR2GRAY, MORPH_CROSS, MORPH_ELLIPSE, MORPH_RECT};
+    rectangleByRect,
+    resize};
+use const CV\{COLOR_BGR2GRAY, CV_HAAR_DO_ROUGH_SEARCH};
 
 
+//trainFolder();
 //Folderi
 $ulaz = 'slike/';
 $izlaz = 'tmp/';
 $anotacija = 'anotacija/';
-
 
 $input = filter_input(INPUT_POST, 'slika');
 
@@ -35,6 +32,8 @@ $mod = filter_input(INPUT_POST, 'model');
 $trainModel = filter_input(INPUT_POST, 'train_model');
 
 $train = filter_input(INPUT_POST, 'train', FILTER_VALIDATE_INT);
+
+$file = array_diff(scandir('train'), array('..', '.'));
 
 
 $src = imread($ulaz . $input);
@@ -50,35 +49,63 @@ if ($trainModel == true):
     $faceRecognizer = LBPHFaceRecognizer::create();
 endif;
 
-
 //konvertovanje slike u sivu
 $gray = cvtColor($src, COLOR_BGR2GRAY);
 
 
-if ($hist == 1):
 //Histogram
-    equalizeHist($gray, $gray);
-endif;
+equalizeHist($gray, $gray);
+
 
 //detektovanje lica
-$faceClassifier->detectMultiScale($gray, $faces);
+$faceClassifier->detectMultiScale($gray, $faces, 1.1, 3, CV_HAAR_DO_ROUGH_SEARCH, new Size(50, 50));
 
 $faceImages = $faceLabels = [];
 
+
 if ($faces) {
 
-    //Treniranje objekta
 
+    $facemark = FacemarkLBF::create();
+    $facemark->loadModel('modeli/opencv-facemark-lbf/lbfmodel.yaml');
+
+
+    $facemark->fit($src, $faces, $landmarks);
+
+    if ($landmarks) {
+        $scalar = new Scalar(0, 0, 255);
+        foreach ($landmarks as $face) {
+            foreach ($face as $k => $point) {//var_export($point);
+                circle($src, $point, 2, $scalar, 2);
+            }
+        }
+    }
+
+
+    //Treniranje objekta
+    $MyFace = null;
     if ($trainModel == true):
+
+
         foreach ($faces as $k => $face) {
             $faceImages[] = $gray->getImageROI($face); // face coordinates to image
             $faceLabels[] = $train;
+
         }
+
 
         $faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
         $faceRecognizer->update($faceImages, $faceLabels);
         $faceRecognizer->write("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
     endif;
+
+    $facett = null;
+
+    foreach ($faces as $k => $face):
+        $facett = $gray->getImageROI($face); // face coordinates to image
+
+    endforeach;
+
 
     $scalar = new Scalar(0, 0, 255);
 
@@ -98,7 +125,12 @@ if ($faces) {
 
 }
 
+if (file_exists($izlaz . $input)):
+    unlink($izlaz . $input);
+endif;
+
 imwrite($izlaz . $input, $src);
+
 
 ?>
 <!doctype html>

@@ -1,5 +1,6 @@
-x:1790;x:2188;x:1325;x:2462;x:2894;y:1146;y:1248;y:1248;y:1281;y:1199;width:124;width:124;width:145;width:139;width:144;height:124;
-height:124;
+x:1789;x:2185;x:1324;x:2463;x:2892;x:777;y:1145;y:1247;y:1246;y:1280;y:1200;y:1478;width:129;width:126;width:147;width:142;width:145;width:267;height:129;
+height:126;
+height:147;
+height:142;
 height:145;
-height:139;
-height:144;
+height:267;

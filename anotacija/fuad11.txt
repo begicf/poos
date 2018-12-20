@@ -1,0 +1,2 @@
+x:433;x:830;y:354;y:375;width:58;width:80;height:58;
+height:80;

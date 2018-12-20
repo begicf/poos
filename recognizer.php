@@ -3,13 +3,14 @@
 use CV\CascadeClassifier;
 use CV\Face\LBPHFaceRecognizer;
 use CV\Point;
+use CV\Size;
 use CV\Scalar;
 use function CV\{cvtColor, equalizeHist, imread, imwrite, putText, rectangle, rectangleByRect};
-use const CV\{COLOR_BGR2GRAY};
+use const CV\{COLOR_BGR2GRAY,CV_HAAR_SCALE_IMAGE};
 
 //use Point;
 $ulaz = 'slike/';
-$izlaz = 'rezultati/';
+$izlaz = 'rezultati/prepoznavanje/';
 
 $input = filter_input(INPUT_POST, 'slika');
 
@@ -23,18 +24,22 @@ $src = imread($ulaz . $input);
 
 // modeli lbpcascade_frontalface
 $faceClassifier = new CascadeClassifier();
-$faceClassifier->load('modeli/lbpcascades/lbpcascade_frontalface_improved.xml');
+$faceClassifier->load('modeli/lbpcascades/lhaarcascade_frontalface_alt2.xml');
 
 $gray = cvtColor($src, COLOR_BGR2GRAY);
+equalizeHist($gray, $gray);
+
 $faceClassifier->detectMultiScale($gray, $faces);
 
 $faceRecognizer = LBPHFaceRecognizer::create();
 
-$faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train.yml");
+$faceRecognizer->read("trenirani_model" . DIRECTORY_SEPARATOR . "train2.yml");
 
 $labels = [1 => 'Fuad Begic', 2 => 'Selma Ahmetovic', 3 => 'Nepoznato'];
 
-equalizeHist($gray, $gray);
+
+
+
 foreach ($faces as $face) {
     $faceImage = $gray->getImageROI($face);
 
@@ -46,11 +51,11 @@ foreach ($faces as $face) {
 
 
     $scalar = new \CV\Scalar(0, 0, 255);
-    rectangleByRect($src, $face, $scalar, 2);
+    rectangleByRect($src, $face, $scalar, 1, 8, 0);
     $text = $labels[$faceLabel];
 
     rectangle($src, $face->x, $face->y, $face->x+80 + ($faceLabel == 1 ? 50 : 130), $face->y - 30, new Scalar(255, 255, 255), -2);
-    putText($src, "$text", new Point($face->x, $face->y - 2), 0, 1.5, new Scalar(), 2);
+    putText($src, $text, new Point($face->x, $face->y - 10), 3, 1, new Scalar(0, 0, 0),2);
 }
 imwrite($izlaz . $input . '_det', $src);
 

@@ -1,1 +1,1 @@
-x:1511;y:1831;width:160;height:160;
+x:1511;y:1831;width:159;height:159;

@@ -77,7 +77,6 @@
                     </div>
 
 
-
                     <div class="form-check">
                         <input name="hist" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
                         <label class="form-check-label" for="defaultCheck1">
@@ -113,28 +112,18 @@
     </div>
     <br/>
 
+
     <div class="card">
-        <h5 class="card-header">Algortiam Face detection i treniranje</h5>
+        <h5 class="card-header">Treniranje</h5>
         <div class="card-body">
-            <h5 class="card-title">Kaskadni filter za detekciju i treniranje</h5>
+            <h5 class="card-title">Treniranje </h5>
         </div>
         <div class="row justify-content-md-center">
             <div class="col col-md-10">
-                <form method="post" action="cascade.php">
-                    <div class="form-group">
-                        <label for="slika">Izaberite sliku</label>
-
-                        <?php $file = array_diff(scandir('slike'), array('..', '.')); ?>
-
-                        <select name="slika" id="slika" class="form-control">
-                            <?php foreach ($file as $row): ?>
-                                <option value="<?= $row ?>"><?= $row ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <form method="post" action="train.php">
 
                     <div class="form-group">
-                        <label for="slika">Izaberite model</label>
+                        <label for="slika">Izaberite kaskadni filter</label>
 
                         <?php $models = array_diff(scandir('modeli/lbpcascades'), array('..', '.')); ?>
 
@@ -151,28 +140,25 @@
                     </div>
 
 
-
                     <br/>
 
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="trainModel" name="train_model" value="1"
-                               id="trainModel">
-                        <label class="form-check-label" for="trainModel">
-                            Uključi modul za treniranje
+                        <input class="form-check-input" type="checkbox" id="prepareModel" name="prepare_model" value="1"
+                               id="train_Model">
+                        <label class="form-check-label" for="train_Model">
+                            Priprema klasa za treniranje
                         </label>
 
                     </div>
 
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="train_Model" name="train_model" value="1"
+                               id="train_Model">
+                        <label class="form-check-label" for="train_Model">
+                            Uključi modul za treniranje
+                        </label>
 
-                    <div class="form-group">
-
-                        <label for="train">Treniraj model</label>
-                        <select name="train" id="train" class="form-control" disabled>
-                            <option value="1">Fuad Begic</option>
-                            <option value="2">Selma Ahmetović</option>
-                            <option value="3">Nepoznato</option>
-                        </select>
                     </div>
 
 
@@ -188,6 +174,9 @@
         </div>
     </div>
     <br/>
+
+
+    <br/>
     <div class="card">
         <h5 class="card-header">Face recognition</h5>
         <div class="card-body">
@@ -199,7 +188,7 @@
                     <div class="form-group">
                         <label for="slika">Izaberite sliku</label>
 
-                        <?php $file = array_diff(scandir('slike'), array('..', '.')); ?>
+                        <?php $file = array_diff(scandir('test'), array('..', '.')); ?>
 
                         <select name="slika" id="slika" class="form-control">
                             <?php foreach ($file as $row): ?>
@@ -230,6 +219,81 @@
     <br/>
 
     <div class="card">
+        <h5 class="card-header">Poboljšavanje performansi</h5>
+        <div class="card-body">
+            <h5 class="card-title">Kaskadni filter za detekciju i treniranje</h5>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col col-md-10">
+                <form method="post" action="cascade.php">
+                    <div class="form-group">
+                        <label for="slika">Izaberite sliku</label>
+
+                        <?php $file = array_diff(scandir('train'), array('..', '.')); ?>
+
+                        <select name="slika" id="slika" class="form-control">
+                            <?php foreach ($file as $row): ?>
+                                <option value="<?= $row ?>"><?= $row ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slika">Izaberite model</label>
+
+                        <?php $models = array_diff(scandir('modeli/lbpcascades'), array('..', '.')); ?>
+
+                        <select name="model" id="slika" class="form-control">
+                            <?php foreach ($models as $key => $row): ?>
+
+                                <?php if ($key < 4): ?>
+                                    <option value="<?= $row ?>" disabled><?= $row ?></option>
+                                <?php else: ?>
+                                    <option value="<?= $row ?>"><?= $row ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+
+                    <br/>
+
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="trainModel" name="train_model" value="1"
+                               id="trainModel">
+                        <label class="form-check-label" for="trainModel">
+                            Uključi modul za do treniranje
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="train">Treniraj model</label>
+                        <select name="train" id="train" class="form-control" disabled>
+                            <option value="1">Fuad Begic</option>
+                            <option value="2">Selma Ahmetović</option>
+                            <option value="3">Nepoznato</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary float-right">Pokreni</button>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="font-italic">* Odaberite parametre i pokrenite algoritam</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="card">
         <h5 class="card-header">Direktorij (ulaz, izlaz, modeli)</h5>
         <div class="card-body">
             <ul class="list-group">
@@ -239,11 +303,16 @@
                 <li class="list-group-item"><a href="trenirani_model/">Trenirani modeli za prepoznavanje</a></li>
                 <li class="list-group-item"><a href="anotacija">Anotacije</a></li>
                 <li class="list-group-item"><a href="10_posto">10%</a></li>
+                <li class="list-group-item"><a href="train">Klasa za treniranje</a></li>
+                <li class="list-group-item"><a href="test">Klasa za testiranje</a></li>
             </ul>
 
 
         </div>
     </div>
+    <br/>
+
+
     <br/>
 
 </main>
